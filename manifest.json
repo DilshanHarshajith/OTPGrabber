@@ -3,7 +3,7 @@
   "name": "OTPGrabber",
   "version": "1.1.0",
   "description": "Watches your Gmail for one-time passcodes and copies the newest one to your clipboard automatically.",
-  "homepage_url": "https://github.com/your-name/OTPGrabber",
+  "homepage_url": "https://github.com/DilshanHarshajith/OTPGrabber",
   "permissions": [
     "alarms",
     "clipboardWrite",
