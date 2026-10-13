@@ -1,0 +1,5 @@
+# Development-only files, excluded from `web-ext build` and `web-ext lint`.
+tools/
+package.json
+package-lock.json
+.web-extignore
