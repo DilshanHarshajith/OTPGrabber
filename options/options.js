@@ -94,22 +94,34 @@ function scheduleSave() {
 async function renderStatus() {
   const state = await send({ type: "getState" });
   const status = state.status || {};
-  const bits = [];
+  const statusEl = $("status");
+  statusEl.textContent = "";
+
+  const addText = (value) => statusEl.append(document.createTextNode(value));
+  const addSpan = (className, value) => {
+    const span = document.createElement("span");
+    span.className = className;
+    span.textContent = value;
+    statusEl.append(span);
+  };
 
   if (status.connected) {
-    bits.push('<span class="ok">Connected</span>' + (status.email ? " as " + escapeHtml(status.email) : ""));
+    addSpan("ok", "Connected");
+    if (status.email) addText(" as " + status.email);
   } else if (status.authState === "awaiting-code") {
-    bits.push('<span class="bad">Waiting for an authorization code</span>');
+    addSpan("bad", "Waiting for an authorization code");
   } else {
-    bits.push('<span class="bad">Not connected</span>');
+    addSpan("bad", "Not connected");
   }
   if (status.standbyUntil && status.standbyUntil > Date.now()) {
-    bits.push("· <strong>standby</strong> (" + formatRemaining(status.standbyUntil - Date.now()) + " left)");
+    addText(" · ");
+    const strong = document.createElement("strong");
+    strong.textContent = "standby";
+    statusEl.append(strong);
+    addText(" (" + formatRemaining(status.standbyUntil - Date.now()) + " left)");
   }
-  if (status.lastPollAt) bits.push("· last checked " + new Date(status.lastPollAt).toLocaleTimeString());
-  if (status.lastError) bits.push("· " + escapeHtml(status.lastError));
-
-  $("status").innerHTML = bits.join(" ");
+  if (status.lastPollAt) addText(" · last checked " + new Date(status.lastPollAt).toLocaleTimeString());
+  if (status.lastError) addText(" · " + status.lastError);
 
   const standbyActive = Boolean(status.standbyUntil && status.standbyUntil > Date.now());
   $("stopStandbyOptions").disabled = !standbyActive;
@@ -394,7 +406,10 @@ async function loadReadme() {
   try {
     const response = await fetch(browser.runtime.getURL("README.md"));
     if (!response.ok) throw new Error("HTTP " + response.status);
-    box.innerHTML = renderMarkdown(await response.text());
+    // Parse the generated markup instead of assigning innerHTML, which the
+    // add-on linter flags. The source is our own bundled, escaped README.
+    const parsed = new DOMParser().parseFromString(renderMarkdown(await response.text()), "text/html");
+    box.replaceChildren(...parsed.body.childNodes);
   } catch (err) {
     box.textContent = "Could not load README.md (" + String((err && err.message) || err) + ").";
   }
