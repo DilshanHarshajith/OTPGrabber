@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OTPGrabber</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #1f2328;
+        --muted: #6a737d;
+        --line: #e1e4e8;
+        --accent: #2563eb;
+        --ok: #1a7f37;
+        --bad: #cf222e;
+        --warn-bg: #fff8c5;
+      }
+      * { box-sizing: border-box; }
+      body {
+        width: 340px;
+        margin: 0;
+        font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: var(--fg);
+        background: var(--bg);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+      header h1 { font-size: 13px; margin: 0; flex: 1; }
+      .dot { width: 9px; height: 9px; border-radius: 50%; background: #9aa0a6; }
+      .dot.on { background: var(--ok); }
+      .dot.off { background: var(--bad); }
+      .dot.busy { background: #d29922; animation: pulse 1s infinite ease-in-out; }
+      @keyframes pulse { 50% { opacity: 0.35; } }
+      section { padding: 12px; border-bottom: 1px solid var(--line); }
+      p { margin: 0 0 8px; color: var(--muted); }
+      label.field { display: block; margin-bottom: 8px; }
+      label.field span { display: block; margin-bottom: 3px; color: var(--muted); }
+      input[type="text"] {
+        width: 100%;
+        padding: 6px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font: inherit;
+      }
+      .row { display: flex; gap: 6px; }
+      .row > * { flex: 1; }
+      button {
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f6f8fa;
+        font: inherit;
+        cursor: pointer;
+      }
+      button:hover:not(:disabled) { background: #eef1f4; }
+      button:disabled { opacity: 0.55; cursor: default; }
+      button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+      button.primary:hover:not(:disabled) { background: #1d4ed8; }
+      button.link { background: none; border: none; color: var(--accent); padding: 0; }
+      .code {
+        font: 700 28px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 2px;
+        text-align: center;
+        margin: 2px 0 4px;
+      }
+      .code.stale { color: var(--muted); font-weight: 400; }
+      .meta { text-align: center; color: var(--muted); margin-bottom: 10px; }
+      .warn {
+        background: var(--warn-bg);
+        border: 1px solid #eac54f;
+        border-radius: 6px;
+        padding: 6px 8px;
+        margin-bottom: 10px;
+      }
+      .toggles { display: flex; gap: 14px; margin: 10px 0; }
+      .toggles label { display: flex; align-items: center; gap: 5px; }
+      ul#history { list-style: none; margin: 0 0 8px; padding: 0; max-height: 132px; overflow: auto; }
+      ul#history li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        border-top: 1px solid var(--line);
+      }
+      ul#history .hc { font-family: ui-monospace, monospace; font-weight: 700; }
+      ul#history .hm { flex: 1; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      ul#history button { padding: 2px 6px; font-size: 12px; }
+      .error { color: var(--bad); padding: 8px 12px; }
+      footer { padding: 8px 12px; color: var(--muted); font-size: 12px; }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span id="dot" class="dot"></span>
+      <h1>OTPGrabber</h1>
+      <button id="openOptions" class="link">Options</button>
+    </header>
+
+    <section id="disconnected">
+      <p>Paste your Google OAuth Client ID to connect a Gmail account.</p>
+      <label class="field">
+        <span>Client ID</span>
+        <input id="clientId" type="text" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false" />
+      </label>
+      <label class="field">
+        <span>Client secret</span>
+        <input id="clientSecret" type="text" placeholder="GOCSPX-…" autocomplete="off" spellcheck="false" />
+      </label>
+      <div class="row">
+        <button id="connect" class="primary">Connect Gmail</button>
+        <button id="openOptions2">Full setup</button>
+      </div>
+    </section>
+
+    <section id="awaiting" hidden>
+      <p id="awaitingText">Approve access, then paste the code here.</p>
+      <label class="field">
+        <span>Authorization code or redirect URL</span>
+        <input id="manualCode" type="text" autocomplete="off" spellcheck="false" />
+      </label>
+      <div class="row">
+        <button id="submitCode" class="primary">Finish</button>
+        <button id="cancelConnect">Cancel</button>
+      </div>
+    </section>
+
+    <section id="connected" hidden>
+      <p id="account">Watching Gmail</p>
+      <div id="code" class="code stale">—</div>
+      <div id="codeMeta" class="meta">No code captured yet</div>
+      <div id="clipboardWarn" class="warn" hidden>Clipboard write was blocked — use “Copy to clipboard”.</div>
+      <button id="copyLast" disabled>Copy to clipboard</button>
+
+      <div class="toggles">
+        <label><input id="autoCopy" type="checkbox" /> Auto-copy</label>
+        <label><input id="notify" type="checkbox" /> Notify</label>
+      </div>
+
+      <div class="row">
+        <button id="pollNow">Check now</button>
+        <button id="scanNow">Rescan mailbox</button>
+      </div>
+
+      <div class="row" style="margin-top: 6px">
+        <button id="standby">Standby (check often)</button>
+        <button id="stopStandby" hidden>Stop standby</button>
+      </div>
+      <div id="standbyStatus" class="meta" hidden></div>
+
+      <ul id="history"></ul>
+      <div class="row">
+        <button id="clearHistory">Clear history</button>
+        <button id="disconnect">Disconnect</button>
+      </div>
+    </section>
+
+    <div id="error" class="error" hidden></div>
+    <footer id="statusLine"></footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

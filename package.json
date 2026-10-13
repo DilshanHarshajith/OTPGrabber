@@ -1,0 +1,13 @@
+{
+  "name": "otpgrabber",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Firefox extension that reads one-time passcodes from a linked Gmail account and copies the newest one to the clipboard.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node tools/check.js",
+    "lint": "node --check background.js && node --check lib/settings.js && node --check lib/otp.js && node --check lib/gmail.js && node --check popup/popup.js && node --check options/options.js && node --check content/autofill.js",
+    "icons": "python3 tools/make_icons.py",
+    "start": "web-ext run --source-dir ."
+  }
+}

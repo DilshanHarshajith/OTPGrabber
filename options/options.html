@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OTPGrabber — Options</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #1f2328;
+        --muted: #6a737d;
+        --line: #e1e4e8;
+        --accent: #2563eb;
+        --ok: #1a7f37;
+        --bad: #cf222e;
+        --code-bg: #f6f8fa;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0 auto;
+        max-width: 720px;
+        padding: 24px 20px 60px;
+        font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: var(--fg);
+        background: var(--bg);
+      }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      h2 { font-size: 15px; margin: 0 0 4px; }
+      p.sub { color: var(--muted); margin: 0 0 20px; }
+      fieldset {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 16px;
+        margin: 0 0 20px;
+      }
+      legend { font-weight: 600; padding: 0 6px; }
+      .hint { color: var(--muted); font-size: 12.5px; margin: 4px 0 12px; }
+      label.field { display: block; margin-bottom: 14px; }
+      label.field > span { display: block; margin-bottom: 4px; font-weight: 500; }
+      input[type="text"], input[type="number"], select {
+        width: 100%;
+        padding: 7px 9px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        font: inherit;
+        background: #fff;
+      }
+      input[type="range"] { width: 100%; }
+      .inline { display: flex; align-items: center; gap: 10px; }
+      .inline > * { flex: 1; }
+      .inline .fixed { flex: 0 0 auto; }
+      .checks { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+      .checks label { display: flex; align-items: center; gap: 6px; }
+      .toggles label { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+      .row { display: flex; gap: 8px; margin-top: 10px; }
+      button {
+        padding: 7px 12px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #f6f8fa;
+        font: inherit;
+        cursor: pointer;
+      }
+      button:hover:not(:disabled) { background: #eef1f4; }
+      button:disabled { opacity: 0.55; cursor: default; }
+      button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+      button.primary:hover:not(:disabled) { background: #1d4ed8; }
+      code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+      #status { margin: 0 0 20px; }
+      .ok { color: var(--ok); font-weight: 600; }
+      .bad { color: var(--bad); font-weight: 600; }
+      #connectStatus { margin-top: 10px; color: var(--muted); }
+      .out { font-family: ui-monospace, monospace; }
+
+      .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin: 0 0 20px; }
+      .tab {
+        padding: 8px 14px;
+        border: 1px solid transparent;
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        margin-bottom: -1px;
+      }
+      .tab:hover { color: var(--fg); }
+      .tab.active {
+        background: var(--bg);
+        border-color: var(--line);
+        border-bottom-color: var(--bg);
+        color: var(--fg);
+        font-weight: 600;
+      }
+
+      .guide ol { padding-left: 22px; }
+      .guide ol > li { margin-bottom: 12px; }
+      .guide .step-title { font-weight: 600; }
+      .guide .sub { margin: 2px 0 0; color: var(--muted); }
+      .callout {
+        border-left: 3px solid var(--accent);
+        background: #f0f6ff;
+        padding: 8px 12px;
+        border-radius: 0 6px 6px 0;
+        margin: 10px 0;
+      }
+      .callout.warn { border-color: #d4a72c; background: #fff8e5; }
+
+      .readme h1 { font-size: 19px; margin: 24px 0 8px; }
+      .readme h2 { font-size: 16px; margin: 22px 0 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+      .readme h3 { font-size: 14px; margin: 18px 0 6px; }
+      .readme p { color: var(--fg); }
+      .readme ul, .readme ol { padding-left: 22px; }
+      .readme li { margin: 2px 0; }
+      .readme pre {
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 10px 12px;
+        overflow: auto;
+      }
+      .readme pre code { background: none; padding: 0; }
+      .readme blockquote {
+        margin: 10px 0;
+        padding: 2px 14px;
+        border-left: 3px solid var(--line);
+        color: var(--muted);
+      }
+      .readme table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13px; }
+      .readme th, .readme td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+      .readme th { background: var(--code-bg); }
+      .readme hr { border: none; border-top: 1px solid var(--line); margin: 20px 0; }
+      .readme a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <h1>OTPGrabber</h1>
+    <p class="sub">Reads one-time passcodes from a linked Gmail account and copies the newest one.</p>
+
+    <p id="status">Loading…</p>
+
+    <nav class="tabs">
+      <button id="tabBtnSettings" class="tab active" type="button">Settings</button>
+      <button id="tabBtnHelp" class="tab" type="button">Help &amp; setup</button>
+      <button id="tabBtnReadme" class="tab" type="button">README</button>
+    </nav>
+
+    <div id="tabSettings">
+    <fieldset>
+      <legend>Google account</legend>
+      <p class="hint">
+        Create an OAuth client of type <strong>Desktop app</strong> in Google Cloud Console and enable the Gmail API.
+        A Desktop app client works with the Automatic redirect out of the box; see
+        <strong>Redirect URIs</strong> below if you use a Web application client.
+      </p>
+      <label class="field">
+        <span>OAuth Client ID</span>
+        <input id="clientId" type="text" placeholder="xxxx.apps.googleusercontent.com" autocomplete="off" spellcheck="false" />
+      </label>
+      <label class="field">
+        <span>OAuth Client secret (Google requires this even with PKCE)</span>
+        <input id="clientSecret" type="text" placeholder="GOCSPX-…" autocomplete="off" spellcheck="false" />
+      </label>
+      <label class="field">
+        <span>Sign-in redirect mode</span>
+        <select id="redirectMode">
+          <option value="auto">Automatic (loopback — recommended)</option>
+          <option value="extension">Extensions.allizom.org redirect (published builds)</option>
+          <option value="manual">Manual paste (fallback)</option>
+        </select>
+      </label>
+      <p id="redirectNote" class="hint"></p>
+      <label class="field">
+        <span>Refresh token (optional — paste one to skip the sign-in flow)</span>
+        <input id="pastedRefreshToken" type="text" autocomplete="off" spellcheck="false" />
+      </label>
+      <div class="row">
+        <button id="connect" class="primary">Connect Gmail</button>
+        <button id="disconnect">Disconnect</button>
+      </div>
+      <p id="connectStatus"></p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Redirect URIs</legend>
+      <p class="hint">
+        Register these on your Google OAuth client (Credentials → your client → Authorized redirect URIs).
+        A <strong>Desktop app</strong> client accepts the loopback URI automatically, so no registration is needed;
+        a <strong>Web application</strong> client must be given the values below. The loopback URI is stable as long
+        as the add-on ID in <code>manifest.json</code> does not change.
+      </p>
+      <label class="field">
+        <span>Loopback redirect (used by Automatic mode)</span>
+        <div class="inline">
+          <input id="loopbackRedirect" type="text" readonly />
+          <button id="copyLoopback" class="fixed" type="button">Copy</button>
+        </div>
+      </label>
+      <label class="field">
+        <span>Published extension redirect</span>
+        <div class="inline">
+          <input id="extensionRedirect" type="text" readonly />
+          <button id="copyExtension" class="fixed" type="button">Copy</button>
+        </div>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Polling</legend>
+      <label class="field">
+        <span>Normal check frequency (minutes)</span>
+        <input id="pollMinutes" type="number" min="1" max="60" step="1" />
+      </label>
+      <p class="hint">
+        Standby mode is a temporary boost you switch on from the popup while you are waiting for a code —
+        it checks far more often, then turns itself off automatically after the set duration.
+      </p>
+      <label class="field">
+        <span>Standby check frequency (seconds)</span>
+        <input id="standbySeconds" type="number" min="5" max="600" step="1" />
+      </label>
+      <label class="field">
+        <span>Standby duration (minutes)</span>
+        <input id="standbyMinutes" type="number" min="1" max="240" step="1" />
+      </label>
+      <div class="row">
+        <button id="stopStandbyOptions">Stop standby</button>
+      </div>
+      <p id="standbyNote" class="hint"></p>
+      <label class="field">
+        <span>Only look at mail from the last (hours)</span>
+        <input id="lookbackHours" type="number" min="1" max="168" step="1" />
+      </label>
+      <label class="field">
+        <span>Only these senders (optional Gmail search, e.g. <code>from:bank.com</code>)</span>
+        <input id="senderFilter" type="text" placeholder="(any sender)" autocomplete="off" spellcheck="false" />
+      </label>
+      <label class="toggles"><input id="includeAllCategories" type="checkbox" /> Also scan Promotions and Social</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Detection</legend>
+      <p class="hint">Codes shorter than the minimum score are ignored, which filters out order numbers and dates.</p>
+      <label class="field">
+        <span>Code lengths to accept</span>
+        <div id="lengths" class="checks"></div>
+      </label>
+      <label class="toggles"><input id="allowAlphanumeric" type="checkbox" /> Accept letter-and-number codes (e.g. <code>7F3K-9QX2</code>)</label>
+      <label class="field">
+        <span>Minimum confidence score: <output id="minScoreOut">30</output></span>
+        <input id="minScore" type="range" min="0" max="100" step="1" />
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Behaviour</legend>
+      <label class="toggles"><input id="autoCopy" type="checkbox" /> Copy new codes to the clipboard automatically</label>
+      <label class="toggles"><input id="notify" type="checkbox" /> Show a desktop notification when a code arrives</label>
+      <label class="toggles"><input id="autoFill" type="checkbox" /> Drop codes into on-page one-time-code fields (auto-fill)</label>
+      <p id="autoFillNote" class="hint"></p>
+      <div class="row">
+        <button id="grantSites">Grant site access</button>
+        <button id="revokeSites">Revoke site access</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Maintenance</legend>
+      <div class="row">
+        <button id="clearHistory">Clear captured code history</button>
+        <button id="clearClipboard">Clear the clipboard</button>
+      </div>
+    </fieldset>
+    </div>
+
+    <div id="tabHelp" class="guide" hidden>
+      <h2 style="border: none; padding: 0">Set up your Google API access</h2>
+      <p class="sub">
+        You only do this once. It takes about five minutes and needs a free Google Cloud project.
+        Everything happens between this page and Google — the extension never sends your credentials anywhere else.
+      </p>
+
+      <ol>
+        <li>
+          <div class="step-title">Create a project and enable the Gmail API</div>
+          <p class="sub">
+            Open the <a href="https://console.cloud.google.com/" target="_blank" rel="noopener">Google Cloud Console</a>,
+            create a project (or pick an existing one), then go to
+            <strong>APIs &amp; Services → Library</strong>, search for <strong>Gmail API</strong> and click <strong>Enable</strong>.
+          </p>
+        </li>
+        <li>
+          <div class="step-title">Configure the OAuth consent screen</div>
+          <p class="sub">
+            Go to <strong>APIs &amp; Services → OAuth consent screen</strong>. Choose <strong>External</strong>, fill in the
+            app name and your email, and save. While the app is in <strong>Testing</strong>, add every Gmail account you
+            want to use under <strong>Test users</strong> — otherwise Google returns
+            <code>403: access_denied</code>.
+          </p>
+          <div class="callout warn">
+            Refresh tokens for a Testing-mode app expire after 7 days, so you would reconnect weekly. Publish the app
+            to avoid that (the verification step is not required for personal use).
+          </div>
+        </li>
+        <li>
+          <div class="step-title">Create an OAuth client ID</div>
+          <p class="sub">
+            Go to <strong>APIs &amp; Services → Credentials → Create credentials → OAuth client ID</strong> and choose
+            application type <strong>Desktop app</strong>. A Desktop app client works with the Automatic redirect with no
+            further setup. Copy the <strong>Client ID</strong> and <strong>Client secret</strong>.
+          </p>
+          <div class="callout">
+            Using a <strong>Web application</strong> client instead? Add the loopback redirect URI below to its
+            <strong>Authorized redirect URIs</strong>:
+            <div class="inline" style="margin-top: 6px">
+              <input id="helpLoopbackRedirect" type="text" readonly />
+              <button id="helpCopyLoopback" class="fixed" type="button">Copy</button>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="step-title">Paste the credentials into Settings</div>
+          <p class="sub">
+            Copy the Client ID and Client secret into the <strong>Google account</strong> section on the
+            <a href="#" id="helpToSettings">Settings</a> tab, then click <strong>Connect Gmail</strong>.
+          </p>
+        </li>
+        <li>
+          <div class="step-title">Approve access</div>
+          <p class="sub">
+            A Google window opens; pick your account and grant read-only access to Gmail. The window closes by itself
+            when it is done.
+          </p>
+        </li>
+      </ol>
+
+      <div class="callout">
+        <strong>Troubleshooting.</strong>
+        <ul style="margin: 6px 0 0">
+          <li><code>redirect_uri_mismatch</code> — a Web application client is missing the loopback URI above (or you registered the URL for the wrong client).</li>
+          <li><code>403: access_denied</code> — your account is not listed as a Test user on the consent screen.</li>
+          <li><code>client_secret is missing</code> — paste the Client secret too; Google requires it even with PKCE.</li>
+          <li>Nothing is captured — check the sender filter, the lookback window, and try <strong>Rescan mailbox</strong> in the popup.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div id="tabReadme" hidden>
+      <div id="readme" class="readme"></div>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>
