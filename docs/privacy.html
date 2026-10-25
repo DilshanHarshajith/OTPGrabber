@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy — OTPGrabber</title>
+  <meta name="description" content="Privacy policy for the OTPGrabber Firefox extension.">
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; line-height: 1.7; }
+    header, main, footer { max-width: 720px; margin: 0 auto; padding: 24px; }
+    header { padding-top: 48px; }
+    h1 { margin: 0 0 8px; font-size: 2rem; }
+    h2 { margin-top: 32px; }
+    footer { padding-bottom: 48px; opacity: 0.7; font-size: 0.9rem; }
+    a { color: inherit; }
+    ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Privacy Policy</h1>
+    <p>Last updated: October 25, 2026</p>
+  </header>
+  <main>
+    <p>OTPGrabber is a Firefox extension that helps you copy one-time passcodes from your Gmail inbox to your clipboard. This policy explains what information is accessed and how it is used.</p>
+
+    <h2>Information we access</h2>
+    <ul>
+      <li><strong>Gmail messages</strong>: With your explicit consent, the extension uses the Gmail API via OAuth 2.0 to search for and read messages in your Gmail account for the purpose of detecting one-time passcodes. Only messages needed to find codes are read.</li>
+      <li><strong>Google account info</strong>: Basic profile information (email address) may be used to display which account is connected.</li>
+    </ul>
+
+    <h2>How your information is used</h2>
+    <ul>
+      <li>All processing happens <strong>locally in your browser</strong>. Detected codes are copied to your clipboard on your device.</li>
+      <li>OAuth tokens, settings, and a short history of detected codes are stored in <code>browser.storage.local</code> on your device.</li>
+      <li>The extension does <strong>not</strong> send your emails, codes, or personal data to the developer or any third-party servers.</li>
+      <li>The only external servers contacted are Google's own services (<code>accounts.google.com</code>, <code>oauth2.googleapis.com</code>, <code>gmail.googleapis.com</code>) as required to authenticate and retrieve your messages.</li>
+    </ul>
+
+    <h2>Data sharing and retention</h2>
+    <ul>
+      <li><strong>No sharing</strong>: Your data is never sold, shared, or transmitted to anyone other than Google as part of the normal Gmail API and OAuth flow you explicitly authorize.</li>
+      <li><strong>Local retention</strong>: Data remains in your browser until you clear it (by disconnecting the account, clearing extension data, or uninstalling the extension).</li>
+    </ul>
+
+    <h2>Permissions</h2>
+    <p>OTPGrabber requests only the permissions necessary for its functionality: <code>identity</code>, <code>storage</code>, <code>alarms</code>, <code>clipboardWrite</code>, <code>notifications</code>, and host permissions for Google's OAuth and Gmail endpoints. An optional host permission (<code>&lt;all_urls&gt;</code>) is only used if you enable the optional auto-fill feature, and even then it only fills one-time-code fields you focus.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>This policy may be updated from time to time. Changes will be posted on this page with an updated "Last updated" date.</p>
+
+    <h2>Contact</h2>
+    <p>If you have questions about this privacy policy, you can reach out via the project page on <a href="https://github.com/DilshanHarshajith/OTPGrabber">GitHub</a>.</p>
+  </main>
+  <footer>
+    <p><a href="index.html">Home</a> · &copy; 2026 Dilshan Harshajith</p>
+  </footer>
+</body>
+</html>
